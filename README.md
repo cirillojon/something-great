@@ -2,6 +2,10 @@
 
 This template should help get you started developing with Svelte and TypeScript in Vite.
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bac2e247-de66-46ed-8d1f-65e474fad12f/deploy-status)](https://app.netlify.com/sites/in-the-works/deploys)
+
+URL: https://in-the-works.netlify.app/
+
 ## Recommended IDE Setup
 
 [VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
