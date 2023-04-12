@@ -1,6 +1,7 @@
 [build]
-  publish = "build"
+  base = "/"
   command = "yarn build"
+  publish = "build"
 
 [[plugins]]
   package = "@netlify/plugin-svelte"
@@ -9,3 +10,5 @@
 
 [build.environment]
   NODE_VERSION = "16"
+
+
