@@ -1,4 +1,11 @@
 [build]
-  command = "yarn build"
-  functions = "built-lambda"
   publish = "build"
+  command = "npm run build"
+
+[[plugins]]
+  package = "@netlify/plugin-svelte"
+  [plugins.inputs]
+    command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "16"
