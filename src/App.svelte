@@ -3,6 +3,8 @@
   import Home from './Home.svelte';
   import About from './About.svelte';
   import Contact from './Contact.svelte';
+  import JonsPage from './Jons-page.svelte';
+
 
   let currentPath = '/';
   const handleNavigation = (path) => {
@@ -32,9 +34,11 @@
     <a href="/" use:link class:active={currentPath === '/'} on:click={() => handleNavigation('/')}>Home</a>
     <a href="/about" use:link class:active={currentPath === '/about'} on:click={() => handleNavigation('/about')}>About</a>
     <a href="/contact" use:link class:active={currentPath === '/contact'} on:click={() => handleNavigation('/contact')}>Contact</a>
+    <a href="/jons-page" use:link class:active={currentPath === '/jons-page'} on:click={() => handleNavigation('/jons-page')}>Jon's Page</a>
   </nav>
 
   <Route path="/" component="{Home}" />
   <Route path="/about" component="{About}" />
   <Route path="/contact" component="{Contact}" />
+  <Route path="/jons-page" component="{JonsPage}" />
 </Router>
