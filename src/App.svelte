@@ -17,9 +17,11 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 2rem;
+	width: 100%;
   }
 
   a {
+	padding: 0px 10px;
     text-decoration: none;
     color: inherit;
   }
@@ -30,7 +32,7 @@
 </style>
 
 <Router>
-  <nav>
+  <nav id="navBar">
     <a href="/" use:link class:active={currentPath === '/'} on:click={() => handleNavigation('/')}>Home</a>
     <a href="/about" use:link class:active={currentPath === '/about'} on:click={() => handleNavigation('/about')}>About</a>
     <a href="/contact" use:link class:active={currentPath === '/contact'} on:click={() => handleNavigation('/contact')}>Contact</a>
