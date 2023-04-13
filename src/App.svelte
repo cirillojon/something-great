@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Router, Route, Link, link } from 'svelte-navigator';
-  import Home from './Home.svelte';
-  import About from './About.svelte';
-  import Contact from './Contact.svelte';
-  import JonsPage from './Jons-page.svelte';
+  import Home from './lib/Home.svelte';
+  import About from './lib/About.svelte';
+  import Contact from './lib/Contact.svelte';
+  import JonsPage from './lib/Jons-page.svelte';
 
 
   let currentPath = '/';
