@@ -6,35 +6,40 @@
   const balance = writable<number>(100);
   const betAmount = writable<number>(0);
   const result = writable<string>('');
-  const purchasedItems = writable<{ name: string, object: THREE.Object3D }[]>([]);
+  const purchasedItems = writable<{ name: string, object: THREE.Object3D, renderer: THREE.WebGLRenderer }[]>([]);
 
-  // create a Three.js scene and camera
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
   let renderer: THREE.WebGLRenderer;
-  let item: THREE.Object3D;
+  let itemContainer: HTMLElement;
+
+  function createItem(): { item: THREE.Object3D, renderer: THREE.WebGLRenderer } {
+  const geometry = new THREE.BoxGeometry(2, 2, 2);
+  const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
+  const item = new THREE.Mesh(geometry, material);
+  item.visible = false;
+
+  const newRenderer = new THREE.WebGLRenderer({ antialias: true });
+  newRenderer.setSize(300, 300);
+  newRenderer.setClearColor(0xffffff, 1);
+
+  return { item, renderer: newRenderer };
+}
+
 
   onMount(() => {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(300, 300);
-    renderer.setClearColor(0xffffff, 1); 
-    document.body.appendChild(renderer.domElement);
-    
-    // create a new Three.js object to represent the purchased item
-    const geometry = new THREE.BoxGeometry(2,2,2);
-    const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff }); // random color
-    item = new THREE.Mesh(geometry, material);
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+  camera.position.z = 10;
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(300, 300);
+  renderer.setClearColor(0xffffff, 1);
 
-    // position the item based on how many have been purchased already
-    const itemPosition = $purchasedItems.length > 0 ? 3 * $purchasedItems.length : 0;
-    item.position.set(itemPosition, 0, 0);
+  animate();
+  itemContainer.appendChild(renderer.domElement);
+});
 
-    item.visible = false; // hide the purchased item
-    scene.add(item);
-  });
+
 
   function tossCoin() {
     const guessInput: HTMLInputElement = document.getElementById('guess-input') as HTMLInputElement;
@@ -60,47 +65,41 @@
     betAmount.set(amount);
   }
 
-  function purchaseItem() {
-    if ($balance >= 100) {
-      balance.update(current => current - 100);
-      result.set('Congratulations, you have purchased the item!');
-      
-      // position the purchased item based on how many have been purchased already
-      const itemPosition = $purchasedItems.length > 0 ? 3 * $purchasedItems.length : 0;
-      item.position.set(itemPosition, 0, 0);
-      
-      item.visible = true; // show the purchased item
+function purchaseItem() {
+  if ($balance >= 100) {
+    balance.update(current => current - 100);
+    result.set('Congratulations, you have purchased the item!');
 
-      purchasedItems.update(items => [...items, { name: 'Item', object: item }]);
-} else {
-result.set('Sorry, you do not have enough money to purchase this item.');
-}
-}
+    const { item, renderer: itemRenderer } = createItem();
+    const itemPosition = $purchasedItems.length > 0 ? 3 * $purchasedItems.length : 0;
+    item.position.set(itemPosition, 0, 0);
+    
+    item.visible = true;
+    scene.add(item);
 
-// animate the Three.js scene
-function animate() {
-requestAnimationFrame(animate);
-renderer.render(scene, camera);
+    purchasedItems.update(items => [...items, { name: 'Cube', object: item, renderer: itemRenderer }]);
+  } else {
+    result.set('Sorry, you do not have enough money to purchase this item.');
+  }
 }
 
-onMount(() => {
-console.log('Coin Toss game mounted');
-animate();
-});
 
-onDestroy(() => {
-// remove the Three.js renderer and all objects from the DOM
-document.body.removeChild(renderer.domElement);
-scene.remove(item);
-item.geometry.dispose();
-item.material.dispose();
-});
-
+  function animate() {
+    requestAnimationFrame(animate);
+    scene.traverse((object) => {
+      if (object instanceof THREE.Mesh) {
+        object.rotation.x += 0.01;
+        object.rotation.y += 0.01;
+      }
+    });
+    renderer.render(scene, camera);
+  }
 </script>
+
 <div class="page-container" style="background-color: white;">
   <h1>Coin Toss Game</h1>
   <p>Balance: $ {$balance}</p>
-  <label for ="guess-input">Guess heads or tails:</label>
+  <label for="guess-input">Guess heads or tails:</label>
   <input type="text" id="guess-input" name="guess-input">
   <br>
   <div class="bet-buttons">
@@ -115,14 +114,15 @@ item.material.dispose();
   <div>
     <h2>Purchased items:</h2>
     <ul>
-      {#each $purchasedItems as {name, object}, i}
+      {#each $purchasedItems as {name, object, renderer}, i}
       {#if object.visible}
       <li>
-        <div id="item-container"></div>
         {name} ({i+1})
+        <div bind:this="{renderer.domElement}"></div>
       </li>
       {/if}
       {/each}
     </ul>
   </div>
-</div>  
+  <div bind:this="{itemContainer}"></div>
+</div>
