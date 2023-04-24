@@ -19,6 +19,8 @@
     "vite": "^4.2.1"
   },
   "dependencies": {
-    "svelte-navigator": "^3.2.2"
+    "svelte-navigator": "^3.2.2",
+    "three": "^0.151.3",
+    "three-full": "^28.0.2"
   }
 }
